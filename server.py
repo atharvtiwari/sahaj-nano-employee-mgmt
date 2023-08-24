@@ -1,6 +1,4 @@
 from flask import Flask, request, jsonify
-import json
-
 app = Flask(__name__)
 
 employees = []
@@ -14,7 +12,7 @@ def greeting():
 # Create Employee
 @app.route('/employee', methods=['POST'])
 def create_employee():
-    employee = json.loads(request.get_json())
+    employee = request.get_json()
     employee_id = str(len(employees) + 1)
     employee.update({"employeeId" : employee_id})
     employees.append(employee)
@@ -23,11 +21,12 @@ def create_employee():
 # Get all Employee details
 @app.route('/employees/all', methods=['GET'])
 def get_all_employees():
-    return []
+    return jsonify(employees)
 
 # Get Employee details
 @app.route('/employee/<id>', methods=['GET'])
 def get_employee(id):
+    
     return {}
 
 # Update Employee
