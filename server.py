@@ -36,17 +36,21 @@ def create_employee():
     employee = request.get_json()
     employees = load_data_from_file()
     employee_id = str(len(employees) + 1)
+    employees.append(employee_id)
+    save_data_to_file(employees)
     result = {"employeeId" : employee_id}
     employee.update(result)
     create_to_file(employee, employee_id)
-    employees.append(employee_id)
-    save_data_to_file(employees)
     return jsonify(result), 201
 
 @app.route('/employees/all', methods=['GET'])
 def get_all_employees():
+    result = []
     employees = load_data_from_file()
-    return jsonify(employees), 200
+    for id in employees:
+        employee = get_from_file(id)
+        result.append(employee)
+    return jsonify(result), 200
 
 @app.route('/employee/<id>', methods=['GET'])
 def get_employee(id):
