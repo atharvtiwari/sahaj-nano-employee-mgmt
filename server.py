@@ -64,7 +64,7 @@ def update_employee(id):
     else:
         updated_employee = request.get_json()
         employee.update(updated_employee)
-        create_to_file(employees)
+        create_to_file(employee)
         return jsonify(employee), 201        
 
 @app.route('/employee/<id>', methods=['DELETE'])
