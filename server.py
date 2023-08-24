@@ -12,7 +12,7 @@ def load_data_from_file():
 
 def save_data_to_file(data):
     with open(app.config['EMPLOYEES_JSON_FILE'], 'w') as file:
-        jsonify(data, file)
+        json.dump(data, file)
 
 employees = load_data_from_file()
 
