@@ -26,7 +26,7 @@ def get_all_employees():
 # Get Employee details
 @app.route('/employee/<id>', methods=['GET'])
 def get_employee(id):
-    employee = employees[int(id) - 1]
+    employee = [i for employee in employees if i['employeeID'] == id][0]
     if (employee):
         return jsonify(employee), 200
     else:
@@ -35,7 +35,7 @@ def get_employee(id):
 # Update Employee
 @app.route('/employee/<id>', methods=['PUT'])
 def update_employee(id):
-    employee = employees[int(id) - 1]
+    employee = [i for employee in employees if i['employeeID'] == id][0]
     if (employee):
         updated_employee = request.get_json()
         employee.update(updated_employee)
@@ -47,7 +47,13 @@ def update_employee(id):
 # Delete Employee
 @app.route('/employee/<id>', methods=['DELETE'])
 def delete_employee(id):
-    return {}
+    employee = [i for employee in employees if i['employeeID'] == id][0]
+    if (employee):
+        deleted_employees.append(employee)
+        employees.remove(employee)
+        return jsonify(employee), 200
+    else:
+        return jsonify({ "message" : "Employee with " + id + " was not found" }), 404
 
 
 if __name__ == '__main__':
