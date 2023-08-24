@@ -73,9 +73,10 @@ def delete_employee(id):
     if employee == {}:
         return jsonify({ "message" : f"Employee with {id} was not found" }), 404
     else:
+        employee = get_from_file(id)
         os.remove(id)
         employees = load_data_from_file()
-        employee = employees.remove(id)
+        employees.remove(id)
         save_data_to_file(employees)
         return jsonify(employee), 200
 
