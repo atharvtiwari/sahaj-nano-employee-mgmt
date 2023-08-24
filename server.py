@@ -15,8 +15,8 @@ def save_data_to_file(data, json_file : str):
     with open(json_file, 'w') as file:
         json.dump(data, file)
 
-employees = load_data_from_file('/home/employees.json')
-deleted_employees = load_data_from_file('/home/deleted_employees.json')
+employees = []
+deleted_employees = []
 
 # Greeting 
 @app.route("/greeting", methods=['GET'])
@@ -41,7 +41,7 @@ def get_all_employees():
 # Get Employee details
 @app.route('/employee/<id>', methods=['GET'])
 def get_employee(id):
-    employee = [i for i in employees if i['employeeID'] == id][0]
+    employee = [i for i in employees if i["employeeID"] == id][0]
     if (employee):
         return jsonify(employee), 200
     else:
@@ -50,7 +50,7 @@ def get_employee(id):
 # Update Employee
 @app.route('/employee/<id>', methods=['PUT'])
 def update_employee(id):
-    employee = [i for i in employees if i['employeeID'] == id][0]
+    employee = [i for i in employees if i["employeeID"] == id][0]
     if (employee):
         updated_employee = request.get_json()
         employee.update(updated_employee)
@@ -63,7 +63,7 @@ def update_employee(id):
 # Delete Employee
 @app.route('/employee/<id>', methods=['DELETE'])
 def delete_employee(id):
-    employee = [i for i in employees if i['employeeID'] == id][0]
+    employee = [i for i in employees if i["employeeID"] == id][0]
     if (employee):
         deleted_employees.append(employee)
         employees.remove(employee)
