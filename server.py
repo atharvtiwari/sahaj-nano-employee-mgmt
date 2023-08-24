@@ -30,12 +30,19 @@ def get_employee(id):
     if (employee):
         return jsonify(employee), 200
     else:
-        return jsonify({ message : "Employee with " + id + " was not found" }), 404
+        return jsonify({ "message" : "Employee with " + id + " was not found" }), 404
 
 # Update Employee
 @app.route('/employee/<id>', methods=['PUT'])
 def update_employee(id):
-    return {}
+    employee = employees[int(id) - 1]
+    if (employee):
+        updated_employee = request.get_json()
+        employee.update(updated_employee)
+        employees[int(id) - 1] = employee
+        return jsonify(employee), 201
+    else:
+        return jsonify({ "message" : "Employee with " + id + " was not found" }), 404   
 
 # Delete Employee
 @app.route('/employee/<id>', methods=['DELETE'])
