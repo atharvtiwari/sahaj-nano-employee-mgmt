@@ -11,10 +11,8 @@ def load_data_from_file():
         return {}
 
 def save_data_to_file(data):
-    json.dump(data, file)
-
-employees = load_data_from_file()
-file = open(app.config['EMPLOYEES_JSON_FILE'], 'w')
+    with open(app.config['EMPLOYEES_JSON_FILE'], 'w') as file:
+        json.dump(data, file)
 
 # Greeting 
 @app.route("/greeting", methods=['GET'])
@@ -27,16 +25,19 @@ def create_employee():
     employee_id = str(len(employees) + 1)
     result = {"employeeId" : employee_id}
     employee.update(result)
+    employees = load_data_from_file()
     employees[employee_id] = employee
     save_data_to_file(employees)
     return jsonify(result), 201
 
 @app.route('/employees/all', methods=['GET'])
 def get_all_employees():
+    employees = load_data_from_file()
     return jsonify(list(employees.values())), 200
 
 @app.route('/employee/<id>', methods=['GET'])
 def get_employee(id):
+    employees = load_data_from_file()
     employee = employees.get(id)
     if employee:
         return jsonify(employee), 200
@@ -45,6 +46,7 @@ def get_employee(id):
 
 @app.route('/employee/<id>', methods=['PUT'])
 def update_employee(id):
+    employees = load_data_from_file()
     employee = employees.get(id)
     if employee:
         updated_employee = request.get_json()
@@ -56,6 +58,7 @@ def update_employee(id):
 
 @app.route('/employee/<id>', methods=['DELETE'])
 def delete_employee(id):
+    employees = load_data_from_file()
     employee = employees.pop(id, None)
     if employee:
         save_data_to_file(employees)
