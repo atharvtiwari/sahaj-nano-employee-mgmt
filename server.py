@@ -15,8 +15,8 @@ def save_data_to_file(data):
     with open(app.config['EMPLOYEES_JSON_FILE'], 'w') as file:
         json.dump(data, file)
 
-def create_to_file(data):
-    with open(list(data.keys())[0], 'w') as file:
+def create_to_file(data, id):
+    with open(id, 'w') as file:
         json.dump(data, file)
 
 def get_from_file(id):
@@ -38,7 +38,7 @@ def create_employee():
     employee_id = str(len(employees) + 1)
     result = {"employeeId" : employee_id}
     employee.update(result)
-    create_to_file(employee)
+    create_to_file(employee, employee_id)
     employees.append(employee_id)
     save_data_to_file(employees)
     return jsonify(result), 201
