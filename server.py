@@ -7,7 +7,7 @@ deleted_employees = []
 # Greeting 
 @app.route("/greeting", methods=['GET'])
 def greeting():
-    return 'Hello world!'
+    return 'Hello world!', 200
 
 # Create Employee
 @app.route('/employee', methods=['POST'])
@@ -21,13 +21,16 @@ def create_employee():
 # Get all Employee details
 @app.route('/employees/all', methods=['GET'])
 def get_all_employees():
-    return jsonify(employees)
+    return jsonify(employees), 200
 
 # Get Employee details
 @app.route('/employee/<id>', methods=['GET'])
 def get_employee(id):
-    
-    return {}
+    employee = employees[int(id) - 1]
+    if (employee):
+        return jsonify(employee), 200
+    else:
+        return jsonify({ message : "Employee with " + id + " was not found" }), 404
 
 # Update Employee
 @app.route('/employee/<id>', methods=['PUT'])
