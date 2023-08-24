@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, json
+import os
 
 app = Flask(__name__)
 app.config['EMPLOYEES_JSON_FILE'] = '/home/employees.json'
@@ -14,6 +15,17 @@ def save_data_to_file(data):
     with open(app.config['EMPLOYEES_JSON_FILE'], 'w') as file:
         json.dump(data, file)
 
+def create_to_file(data):
+    with open(list(data.keys())[0], 'w') as file:
+        json.dump(data, file)
+
+def get_from_file(id):
+    try:
+        with open(id, 'r') as file:
+            return json.load(file)
+    except FileNotFoundError:
+        return {}
+
 # Greeting 
 @app.route("/greeting", methods=['GET'])
 def greeting():
@@ -22,49 +34,50 @@ def greeting():
 @app.route('/employee', methods=['POST'])
 def create_employee():
     employee = request.get_json()
-    employee_id = str(len(employees) + 1)
+    employee_id = str(hash(employee))
     result = {"employeeId" : employee_id}
     employee.update(result)
+    create_to_file(employee)
     employees = load_data_from_file()
-    employees[employee_id] = employee
+    employees.append(employee_id)
     save_data_to_file(employees)
     return jsonify(result), 201
 
 @app.route('/employees/all', methods=['GET'])
 def get_all_employees():
     employees = load_data_from_file()
-    return jsonify(list(employees.values())), 200
+    return jsonify(employees), 200
 
 @app.route('/employee/<id>', methods=['GET'])
 def get_employee(id):
-    employees = load_data_from_file()
-    employee = employees.get(id)
-    if employee:
-        return jsonify(employee), 200
-    else:
+    employee = get_from_file(id)
+    if employee == {}:
         return jsonify({ "message" : f"Employee with {id} was not found" }), 404
+    else:
+        return jsonify(employee), 200
 
 @app.route('/employee/<id>', methods=['PUT'])
 def update_employee(id):
-    employees = load_data_from_file()
-    employee = employees.get(id)
-    if employee:
+    employee = get_from_file(id)
+    if employee == {}:
+        return jsonify({ "message" : f"Employee with {id} was not found" }), 404
+    else:
         updated_employee = request.get_json()
         employee.update(updated_employee)
-        save_data_to_file(employees)
-        return jsonify(employee), 201
-    else:
-        return jsonify({ "message" : f"Employee with {id} was not found" }), 404   
+        create_to_file(employees)
+        return jsonify(employee), 201        
 
 @app.route('/employee/<id>', methods=['DELETE'])
 def delete_employee(id):
-    employees = load_data_from_file()
-    employee = employees.pop(id, None)
-    if employee:
+    employee = get_from_file(id)
+    if employee == {}:
+        return jsonify({ "message" : f"Employee with {id} was not found" }), 404
+    else:
+        os.remove(id)
+        employees = load_data_from_file()
+        employee = employees.remove(id)
         save_data_to_file(employees)
         return jsonify(employee), 200
-    else:
-        return jsonify({ "message" : f"Employee with {id} was not found" }), 404
 
 if __name__ == '__main__':
     app.run(port=8080,host='0.0.0.0')
