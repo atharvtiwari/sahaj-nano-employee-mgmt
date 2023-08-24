@@ -34,11 +34,11 @@ def greeting():
 @app.route('/employee', methods=['POST'])
 def create_employee():
     employee = request.get_json()
-    employee_id = str(hash(employee))
+    employees = load_data_from_file()
+    employee_id = str(len(employees) + 1)
     result = {"employeeId" : employee_id}
     employee.update(result)
     create_to_file(employee)
-    employees = load_data_from_file()
     employees.append(employee_id)
     save_data_to_file(employees)
     return jsonify(result), 201
