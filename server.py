@@ -7,13 +7,18 @@ app.config['EMPLOYEES_JSON_FILE'] = '/home/employees.json'
 def load_data_from_file():
     try:
         with open(app.config['EMPLOYEES_JSON_FILE'], 'r') as file:
-            return json.load(file)
+            return file.read().splitlines()
     except FileNotFoundError:
         return []
 
 def save_data_to_file(data):
     with open(app.config['EMPLOYEES_JSON_FILE'], 'w') as file:
-        json.dump(data, file)
+        for line in data:
+            file.write(line+"\n")
+
+def append_data_to_file(data):
+    with open(app.config['EMPLOYEES_JSON_FILE'], 'a') as file:
+        file.write(data+"\n")
 
 def create_to_file(data, id):
     with open(id, 'w') as file:
@@ -34,10 +39,8 @@ def greeting():
 @app.route('/employee', methods=['POST'])
 def create_employee():
     employee = request.get_json()
-    employees = load_data_from_file()
-    employee_id = str(len(employees) + 1)
-    employees.append(employee_id)
-    save_data_to_file(employees)
+    employee_id = str(hash(frozenset(employee.items())))
+    append_data_to_file(employee_id)
     result = {"employeeId" : employee_id}
     employee.update(result)
     create_to_file(employee, employee_id)
