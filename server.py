@@ -16,7 +16,7 @@ def save_data_to_file(data, json_file : str):
         json.dump(data, file)
 
 employees = load_data_from_file('/home/employees.json')
-deleted_employees = load_data_from_file('/home/employees.json')
+deleted_employees = load_data_from_file('/home/deleted_employees.json')
 
 # Greeting 
 @app.route("/greeting", methods=['GET'])
