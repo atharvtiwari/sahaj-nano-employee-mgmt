@@ -9,7 +9,7 @@ def load_data_from_file():
         with open(app.config['EMPLOYEES_JSON_FILE'], 'r') as file:
             return json.load(file)
     except FileNotFoundError:
-        return {}
+        return []
 
 def save_data_to_file(data):
     with open(app.config['EMPLOYEES_JSON_FILE'], 'w') as file:
