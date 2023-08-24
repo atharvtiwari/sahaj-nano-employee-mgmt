@@ -11,10 +11,10 @@ def load_data_from_file():
         return {}
 
 def save_data_to_file(data):
-    with open(app.config['EMPLOYEES_JSON_FILE'], 'w') as file:
-        json.dump(data, file)
+    json.dump(data, file)
 
 employees = load_data_from_file()
+file = open(app.config['EMPLOYEES_JSON_FILE'], 'w')
 
 # Greeting 
 @app.route("/greeting", methods=['GET'])
@@ -25,10 +25,11 @@ def greeting():
 def create_employee():
     employee = request.get_json()
     employee_id = str(len(employees) + 1)
-    employee.update({"employeeId" : employee_id})
+    result = {"employeeId" : employee_id}
+    employee.update(result)
     employees[employee_id] = employee
     save_data_to_file(employees)
-    return jsonify({"employeeId" : employee_id}), 201
+    return jsonify(result), 201
 
 @app.route('/employees/all', methods=['GET'])
 def get_all_employees():
